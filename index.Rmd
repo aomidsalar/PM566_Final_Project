@@ -7,7 +7,7 @@ output:
         toc_float: TRUE
 ---
 
-This is my PM566 Final Project website.
+This is my PM566 Final Project website home.
 
 ```{r setup, message=FALSE, echo=FALSE, warning=FALSE}
 library(data.table)
