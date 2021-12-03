@@ -201,7 +201,7 @@ colluniv_v3 <- cbind(colluniv, colluniv_v2)
 ```{r geompoint, echo=FALSE}
 p1 <- colluniv_v3[`Area Name` != "California"] %>% ggplot() +
   geom_point(mapping=aes(x=Year, y = `colluniv_v2`, group = `Area Name`, color=`Area Name`)) +
-  labs(title = "Figure 1: Average Weekly Wages at Colleges and Universities in California", x  = "Year", y = "Average Weekly Wages") +
+  labs(title = "Figure 1: Average Weekly Wages at Colleges and \n Universities in California", x  = "Year", y = "Average Weekly Wages") +
   theme(legend.key.size = unit(0.2,"cm"), legend.spacing = unit(0.1,"cm")) +
   facet_wrap(~Ownership) +
   scale_color_manual(values = colors)
@@ -225,7 +225,7 @@ statecolluniv2 <- as.data.table(statecolluniv2)
 p2 <- statecolluniv2[!is.na(pct.chg) & `Area Name` != "California"] %>%
   ggplot() +
   geom_bar(mapping = aes(x = Year, y = pct.chg, fill = `Area Name`), stat ="identity") +
-  labs(title = "Figure 2: Percent Changes in Average Weekly Wages of State Government \n Owned Colleges and Universities in California", y = "Percent Change") +
+  labs(title = "Figure 2: Percent Changes in Average Weekly Wages of State \n Government Owned Colleges and Universities in California", y = "Percent Change") +
   scale_fill_manual(values = colors) +
   theme(legend.key.size = unit(0.2,"cm"), legend.spacing = unit(0.1,"cm"))
 ggplotly(p2)
@@ -245,7 +245,7 @@ privatecolluniv2 <- as.data.table(privatecolluniv2)
 p3 <- privatecolluniv2[!is.na(pct.chg) & `Area Name` != "California"] %>%
   ggplot() +
   geom_bar(mapping = aes(x = Year, y = pct.chg, fill = `Area Name`), stat ="identity") +
-  labs(title = "Figure 3: Percent Changes in Average Weekly Wage of Privately Owned \n Colleges and Universities in California", y = "Percent Change") +
+  labs(title = "Figure 3: Percent Changes in Average Weekly Wage of Privately \n Owned Colleges and Universities in California", y = "Percent Change") +
   scale_fill_manual(values = colors) +
   theme(legend.key.size = unit(0.2,"cm"), legend.spacing = unit(0.1,"cm"))
 ggplotly(p3)
