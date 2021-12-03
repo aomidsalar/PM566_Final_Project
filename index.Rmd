@@ -6,13 +6,8 @@ output:
     html_document:
         toc: TRUE
         toc_float: TRUE
-        html_preview: no
-        citation_package: biblatex
-    github_document:
-    word_document:
-      citation_package: biblatex
     pdf_document:
-    toc: yes
+      toc: yes
 always_allow_html: yes
 ---
 
@@ -27,6 +22,7 @@ library('tidyverse')
 library('plotly')
 library('DT')
 library('knitr')
+library('priceR')
 ```
 
 
@@ -90,6 +86,10 @@ The graphs in this report were made using the ggplot2 package.
 * dplyr
 * tibble
 * tidyverse
+* plotly
+* DT
+* knitr
+* priceR
 
 ```{r filtering, echo=FALSE}
 #step 1
@@ -171,25 +171,41 @@ The below table shows the highest weekly wages per industry in the *education* c
 ```{r topedsector, echo=FALSE}
 topedsector <- education %>% group_by(`Industry Name`) %>% top_n(1, `Average Weekly Wages`)
 #topedsector[order(-topedsector$`Average Weekly Wages`), ] %>% head(5) %>% select(`Area Name`, `Industry Name`, `Year`, `Average Weekly Wages`) %>% knitr::kable(caption = "5 Education Sectors with the Highest Average Weekly Wages")
-datatable(topedsector)
+datatable(topedsector, caption="Education Sectors with the Highest Average Weekly Wages")
 ```
 
 ### 4. Within the *Colleges and Universities* sector, which counties have the highest salaries, and how much have salaries grown over the last decade?
 
-This first scatterplot shows the annual average weekly wages in local government, private, and state government colleges and universities throughout California. The outliers that pop out to me are private colleges/universities in San Mateo County (Stanford is located here), Santa Clara County (Santa Clara University is here), and Los Angeles County (USC, among others). These are all in areas with major cities and a high cost-of-living. Interestingly, Los Angeles also appears to have the only local government-owned colleges and universities in the state and only contains entries from 2006 to 2011; I believe these schools are the Los Angeles Community College District of schools<sup>4</sup>. However, since only five years' worth of data is shown for these colleges and they are still open to this day, it is very likely that the *ownership* and/or *Area Name* for these observations were input differently than in other years. Additionally, there seems to generally be a smaller range in average wages in the colleges and universities that are owned by the state (the points are more clustered together vertically), with Ventura County being an exception with comparatively lower wages. This is likely due to standards and policies that are maintained across these institutions.
+
+**In order for the comparisons on wages to be a little more fair, I adjusted these wages for inflation, using the `priceR` package. I corrected the values in the *Average Weekly Wages* column for inflation in the US to the year 2020 (this is the most recent year in this colleges and universities dataset). All subsequent data and graphs will be based on these inflation-corrected wages.**
+
+
+This first scatterplot shows the annual average weekly wages in local government, private, and state government colleges and universities throughout California. The outliers that pop out to me are private colleges/universities in San Mateo County (Stanford is located here), Santa Clara County (Santa Clara University is here), and Los Angeles County (USC, among others). These are all in areas with major cities and a high cost-of-living. Interestingly, Los Angeles also appears to have the only local government-owned colleges and universities in the state and only contains entries from 2006 to 2011; I believe these schools are the Los Angeles Community College District of schools<sup>4</sup>. However, since only five years' worth of data is shown for these colleges and they are still open to this day, it is very likely that the *ownership* and/or *Area Name* for these observations were input differently than in other years. Additionally, there seems to generally be a smaller range in average wages in the colleges and universities that are owned by the state (the points are more clustered together vertically), with San Joaquin County being an exception with comparatively lower wages. This is likely due to standards and policies that are maintained across these institutions.
 Something to note is that some counties do not have both private and state-government run colleges and universities, and some annual wages were not reported.
 
-```{r geompoint, echo=FALSE}
-colors <- c("Alameda County" = "#8B0000", "Contra Costa County" = "#CD5C5C", "Fresno County" = "#FFC0CB", "Kern County" = "#FFA500", "Los Angeles County" = "#FF4500", "Monterey County" = "#FFD700", "Orange County" = "#BDB76B", "Riverside County" = "#3CB371", "Sacramento County" = "#006400", "San Bernardino County" = "#7CFC00", "San Diego County" = "#20B2AA", "San Francisco County" = "#AFEEEE", "San Luis Obispo County" = "#5F9EA0", "Santa Barbara County" = "#1E90FF", "Santa Clara County" = "#0000CD", "Solano County" = "#9370DB", "Sonoma County" = "#800080", "San Mateo County" = "#FF00FF", "Ventura County" = "#808080")
+
+```{r inflation, echo=FALSE, message=FALSE, results=FALSE}
+colors <- c("Alameda County" = "#8B0000", "Contra Costa County" = "#CD5C5C", "Fresno County" = "#FFC0CB", "Kern County" = "#FFA500", "Los Angeles County" = "#FF4500", "Monterey County" = "#FFD700", "Orange County" = "#BDB76B", "Riverside County" = "#3CB371", "Sacramento County" = "#006400", "San Bernardino County" = "#7CFC00", "San Diego County" = "#20B2AA", "San Francisco County" = "#AFEEEE", "San Luis Obispo County" = "#5F9EA0", "Santa Barbara County" = "#1E90FF", "Santa Clara County" = "#0000CD", "Solano County" = "#9370DB", "Sonoma County" = "#800080", "San Mateo County" = "#FF00FF", "Ventura County" = "#808080", "Stanislaus County" = "#D3D3D3", "Tulare County" = "#FF0000", "San Joaquin County" = "#7DF9FF")
 colluniv <- filter(education, `Industry Name` == "Colleges and Universities")
-p1 <- colluniv[`Area Name` != "California"] %>% ggplot() +
-  geom_point(mapping=aes(x=Year, y = `Average Weekly Wages`, group = `Area Name`, color=`Area Name`)) +
+#p1 <- colluniv[`Area Name` != "California"] %>% ggplot() +
+#  geom_point(mapping=aes(x=Year, y = `Average Weekly Wages`, group = `Area Name`, color=`Area Name`)) +
+#  labs(title = "Average Weekly Wages at Colleges and Universities in California", x  = "Year", y = "Average Weekly Wages") +
+#  theme(legend.key.size = unit(0.2,"cm"), legend.spacing = unit(0.1,"cm")) +
+#  facet_wrap(~Ownership) +
+#  scale_color_manual(values = colors)
+#ggplotly(p1)
+colluniv_v2 <- adjust_for_inflation(colluniv$`Average Weekly Wages`, colluniv$Year, "US", to_date=2020)
+colluniv_v3 <- cbind(colluniv, colluniv_v2)  
+```
+
+```{r geompoint, echo=FALSE}
+p1 <- colluniv_v3[`Area Name` != "California"] %>% ggplot() +
+  geom_point(mapping=aes(x=Year, y = `colluniv_v2`, group = `Area Name`, color=`Area Name`)) +
   labs(title = "Average Weekly Wages at Colleges and Universities in California", x  = "Year", y = "Average Weekly Wages") +
   theme(legend.key.size = unit(0.2,"cm"), legend.spacing = unit(0.1,"cm")) +
   facet_wrap(~Ownership) +
   scale_color_manual(values = colors)
 ggplotly(p1)
-  
 ```
 
 To look more closely at how salary has grown, I calculated the percent changes (compared to the previous year reported) for privately owned and state government owned colleges and universities. 
@@ -197,11 +213,12 @@ To look more closely at how salary has grown, I calculated the percent changes (
 The bar graph plotting these percent changes for colleges and universities owned by the state government is below. Some years with more negative percent changes that stand out to me are 2008-2010. I know that there there was a big recession during this time period. For the most part and especially in the last five years, there are positive percent changes in wages, which likely has to do with annual cost-of-living adjustments.
 
 ```{r statepc, echo=FALSE}
-statecolluniv <- colluniv[Ownership == "State Government"] 
+#statecolluniv <- colluniv[Ownership == "State Government"] 
+statecolluniv <- colluniv_v3[Ownership == "State Government"]
 statecolluniv2 <- statecolluniv %>%
     group_by(`Area Name`) %>%
     arrange(Year) %>%
-    mutate(pct.chg = 100 *(`Average Weekly Wages` - lag(`Average Weekly Wages`))/lag(`Average Weekly Wages`))
+    mutate(pct.chg = 100 *(`colluniv_v2` - lag(`colluniv_v2`))/lag(`colluniv_v2`))
 statecolluniv2 <- as.data.table(statecolluniv2)
 p2 <- statecolluniv2[!is.na(pct.chg) & `Area Name` != "California"] %>%
   ggplot() +
@@ -215,11 +232,11 @@ ggplotly(p2)
 Below is the bar graph showing the percent changes for privately owned colleges and universities in California. Overall, I see more negative percent changes here compared to the previous graph, and this is likely due to the nature of these universities not having government regulation and having more autonomy with how they manage themselves. What stands out to me the most here is the positive percent change from 2018 to 2019 in San Mateo County. I believe Stanford University is the major private university in this county, and I found an article stating that their football coach David Shaw received "over 8.9 million in pay" in 2019, so this was likely a big contributor to the jump in average weekly wage for that year<sup>5</sup>.  
 
 ```{r privatepc, echo=FALSE}
-privatecolluniv <- colluniv[Ownership == "Private"] 
+privatecolluniv <- colluniv_v3[Ownership == "Private"] 
 privatecolluniv2 <- privatecolluniv %>%
     group_by(`Area Name`) %>%
     arrange(Year) %>%
-    mutate(pct.chg = 100 *(`Average Weekly Wages` - lag(`Average Weekly Wages`))/lag(`Average Weekly Wages`))
+    mutate(pct.chg = 100 *(`colluniv_v2` - lag(`colluniv_v2`))/lag(`colluniv_v2`))
 privatecolluniv2 <- as.data.table(privatecolluniv2)
 p3 <- privatecolluniv2[!is.na(pct.chg) & `Area Name` != "California"] %>%
   ggplot() +
@@ -240,5 +257,4 @@ From this analysis, I have found that counties with major cities generally have 
 3. “California Counties by Population.” California Outline, https://www.california-demographics.com/counties_by_population.
 4. “Our Colleges.” LACCD Colleges, https://www.laccd.edu/about/pages/our-colleges.aspx. 
 5. Berkowitz, Steve. “Stanford Football Coach David Shaw Credited with More than $8.9 Million in Pay for 2019.” USA Today, Gannett Satellite Information Network, 4 Aug. 2021, https://www.usatoday.com/story/sports/ncaaf/pac12/2021/08/04/stanford-football-coach-david-shaw-2019-pay/5488869001/. 
-
 
