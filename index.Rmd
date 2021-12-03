@@ -162,7 +162,7 @@ The below table shows the highest weekly wages per industry in the *education* c
 
 ```{r topedsector, echo=FALSE}
 topedsector <- education %>% group_by(`Industry Name`) %>% top_n(1, `Average Weekly Wages`)
-topedsector[order(-topedsector$`Average Weekly Wages`), ] %>% head(5) %>% select(`Area Name`, `Industry Name`, `Year`, `Average Weekly Wages`) %>% knitr::kable(caption = "5 Education Sectors with the Highest Average Weekly Wages")
+#topedsector[order(-topedsector$`Average Weekly Wages`), ] %>% head(5) %>% select(`Area Name`, `Industry Name`, `Year`, `Average Weekly Wages`) %>% knitr::kable(caption = "5 Education Sectors with the Highest Average Weekly Wages")
 datatable(topedsector)
 ```
 
