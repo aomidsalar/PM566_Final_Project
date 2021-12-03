@@ -1,13 +1,21 @@
 ---
 title: "PM566 Final Project"
 author: "Audrey Omidsalar"
+date: "December 10th, 2021"
 output: 
     html_document:
         toc: TRUE
         toc_float: TRUE
+        html_preview: no
+        citation_package: biblatex
+    github_document:
+    word_document:
+      citation_package: biblatex
+    pdf_document:
+    toc: yes
+always_allow_html: yes
 ---
 
-This is my PM566 Final Project website home.
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
