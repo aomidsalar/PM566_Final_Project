@@ -185,8 +185,8 @@ p2 <- statecolluniv2[!is.na(pct.chg) & `Area Name` != "California"] %>%
   labs(title = "Figure 2: Percent Changes in Average Weekly Wages of State \n Government Owned Colleges and Universities in California", y = "Percent Change") +
   scale_fill_manual(values = colors) #+
   #theme(legend.key.size = unit(0.2,"cm"), legend.spacing = unit(0.1,"cm"))
-#ggplotly(p2)
-p2
+ggplotly(p2)
+#p2
 ```
 <sub><sup>**Figure 2** *Percent Changes in Average Weekly Wages of State Government Owned Colleges and Universities in California* This graph shows the yearly percent change in the average weekly wages of State Government owned Colleges and Universities throughout California. It is colored according to county.</sup></sub>
   
@@ -204,8 +204,8 @@ p3 <- privatecolluniv2[!is.na(pct.chg) & `Area Name` != "California"] %>%
   labs(title = "Figure 3: Percent Changes in Average Weekly Wage of Privately \n Owned Colleges and Universities in California", y = "Percent Change") +
   scale_fill_manual(values = colors)# +
   #theme(legend.key.size = unit(0.2,"cm"), legend.spacing = unit(0.1,"cm"))
-#ggplotly(p3)
-p3
+ggplotly(p3)
+#p3
 ```
 <sub><sup>**Figure 3** *Percent Changes in Average Weekly Wage of Privately Owned Colleges and Universities in California* This graph shows the yearly percent change in the average weekly wages of privately owned Colleges and Universities throughout California. It is colored according to county.</sup></sub>
 
