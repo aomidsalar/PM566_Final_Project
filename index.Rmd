@@ -9,7 +9,7 @@ output:
 always_allow_html: true
 ---
 
-A pdf version of the report can be found [here](https://github.com/aomidsalar/PM566_Final_Project/blob/main/index.pdf)
+A more detailed, pdf version of the report can be found [here](https://github.com/aomidsalar/PM566_Final_Project/blob/main/index.pdf)
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
